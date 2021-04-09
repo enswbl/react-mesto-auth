@@ -175,12 +175,6 @@ function App() {
         setLoggedInState(false);
     };
 
-    const [registrationState, setRegistrationState] = React.useState({email: '', password: ''});
-
-    const setRegistration = (email, password) => {
-        setRegistrationState({email: email, password: password});
-    }
-
     return ((
         <>
             <CurrentUserContext.Provider value={currentUser}>
