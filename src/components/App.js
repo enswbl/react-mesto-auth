@@ -168,7 +168,7 @@ function App() {
         setSelectedCardState({isOpen: false});
     };
 
-    const [loggedIn, setLoggedInState] = React.useState(true);
+    const [loggedIn, setLoggedInState] = React.useState(false);
 
 
     const loggedInChecker = () => {
@@ -200,7 +200,7 @@ function App() {
 
                         <ProtectedRoute
                             exact
-                            path="/"
+                            path="*"
                             loggedIn={loggedIn}
                             onEditAvatar={handleEditAvatarClick}
                             onEditProfile={handleEditProfileClick}
@@ -210,18 +210,16 @@ function App() {
                             onLikeCard={handleLikeCardClick}
                             onRemoveCard={handleRemoveCardClick}
                             component={Main}
-
                         />
-
-{/*                        <Route exact path="*">
-                            {loggedIn ? <> <Redirect to="/"/> <Footer/> </> : <Redirect to="/sign-up"/>}
-                        </Route>*/}
 
                     </Switch>
 
+                    <Route path="/"> {/* exact path="*" */}
+                        {loggedIn && <Redirect to="/"/>}
+                    </Route>
 
 
-                   {/* <Route path="/">
+                    {/* <Route path="/">
                         <Header  />
                     </Route>*/}
 
