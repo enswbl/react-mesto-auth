@@ -1,8 +1,8 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
-import * as Auth from './Auth';
 
-const Register = ({onRegister}) => {
+const Register = ({handleRegister}) => {
+
     const [userData, setUserData] = React.useState({email: '', password: ''});
 
     const handleChange = (e) => {
@@ -13,25 +13,13 @@ const Register = ({onRegister}) => {
         });
     }
 
-    const [message, setMessage] = React.useState({message: ''})
+    /*    const [message, setMessage] = React.useState({message: ''})*/
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        let {email, password} = userData;
-
-        Auth.register({email, password})
-            .then((res) => {
-
-                if(res) {
-                    setMessage({message: ''}, () => {
-                        this.props.history.push('/login');
-                    })
-                } else {
-                    setMessage({message: 'Что-то пошло не так'})
-                }
-            })
-            .catch(err => setMessage(err.message || 'Что-то пошло не так')
-            )
+        handleRegister(userData)
+        /*            .catch(err => setMessage(err.message || 'Что-то пошло не так')
+                )*/
     }
 
     return ((

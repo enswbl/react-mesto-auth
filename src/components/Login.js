@@ -1,8 +1,7 @@
 import React from 'react';
-import * as Auth from './Auth';
+import {withRouter} from 'react-router-dom';
 
-
-const Login = () => {
+const Login = ({handleLogin}) => {
     const [userData, setUserData] = React.useState({email: '', password: ''});
 
     const handleChange = (e) => {
@@ -13,22 +12,14 @@ const Login = () => {
         });
     }
 
+    /*    const [message, setMessage] = React.useState({message: ''})*/
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        let {email, password} = userData;
-
-
-
-
-
-        Auth.authorize({email, password})
-            .then((res) => {
-                console.log('res login', res);
-            })
-
+        handleLogin(userData)
+        /*           .catch(err => setMessage(err.message || 'Что-то пошло не так'));*/
 
     }
-
 
     return ((
         <>
@@ -66,4 +57,4 @@ const Login = () => {
     ));
 }
 
-export default Login;
+export default withRouter(Login);

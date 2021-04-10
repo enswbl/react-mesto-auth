@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch, Redirect, useHistory} from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 /*import PopupWithForm from '../PopupWithForm/PopupWithForm';*/
@@ -19,7 +19,7 @@ import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 
-import Auth from './Auth';
+import * as Auth from './Auth';
 
 
 function App() {
@@ -168,12 +168,65 @@ function App() {
         setSelectedCardState({isOpen: false});
     };
 
-    const [loggedIn, setLoggedInState] = React.useState(false);
+    const [loggedIn, setLoggedIn] = React.useState(false);
 
+    /*    const loggedInChecker = () => {
+            setLoggedIn(false);
+        };*/
 
-    const loggedInChecker = () => {
-        setLoggedInState(false);
-    };
+    const history = useHistory();
+
+    const handleLogin = ({email, password}) => {
+        return Auth.authorize({email, password})
+            .then((res) => {
+                if (!res) throw new Error('Неверный email или пароль')
+                if (res.token) {
+                    setLoggedIn(true)
+                    localStorage.setItem('token', res.token)
+                    history.push('/')
+                    return res;
+                }
+            })
+    }
+
+    const handleRegister = ({email, password}) => {
+        return Auth.register({email, password})
+            .then((res) => {
+                if (!res || res.statusCode === 400) throw new Error('Что-то пошло не так');
+                if (res.data) {
+                    localStorage.setItem('token', res.token)
+                    history.push('/sign-in')
+                    return res;
+                }
+            }).catch()
+    }
+
+    React.useEffect(() => {
+        if (loggedIn) {
+            history.push("/");
+        }
+    }, [loggedIn])
+
+    React.useEffect(() => {
+        tokenCheck()
+    }, [])
+
+    const [userData, setUserData] = React.useState({
+        email: '',
+        password: ''
+    })
+
+    const tokenCheck = () => {
+        if (localStorage.getItem('token')) {
+            let token = localStorage.getItem('token');
+            Auth.checkData(token).then(({email, password}) => {
+                if (email) {
+                    setLoggedIn(true)
+                    setUserData({email, password})
+                }
+            });
+        }
+    }
 
     return ((
         <>
@@ -186,10 +239,10 @@ function App() {
                     <Switch>
 
                         <Route path="/sign-up">
-                            <Register/>
+                            <Register handleRegister={handleRegister}/>
                         </Route>
                         <Route path="/sign-in">
-                            <Login/>
+                            <Login handleLogin={handleLogin}/>
                         </Route>
 
                         <ProtectedRoute

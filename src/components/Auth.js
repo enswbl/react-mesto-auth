@@ -1,7 +1,7 @@
 import React from 'react';
 
-export const BASE_URL = 'https://auth.nomoreparties.co';
 
+export const BASE_URL = 'https://auth.nomoreparties.co';
 
 const checkResponse = (res) => {
     console.log('res checkResponse', res);
@@ -25,6 +25,7 @@ export const register = ({email, password}) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
+            console.log('res register', res);
             return res;
         })
 };
@@ -40,7 +41,7 @@ export const authorize = ({email, password}) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
-            console.log('res', res);
+            console.log('res authorize', res);
             return res;
         })
 };
@@ -56,16 +57,7 @@ export const checkData = (token) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
-            console.log('res', res);
+            console.log('res checkData', res);
             return res;
         })
-}
-
-
-
-/*
-321321321123@yandex.ru 321321321123
-_id: "606fd38b546906001995a774", email: "321321321123@yandex.ru"
-*/
-
-/*const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);*/
+};
