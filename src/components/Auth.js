@@ -4,7 +4,7 @@ import React from 'react';
 export const BASE_URL = 'https://auth.nomoreparties.co';
 
 const checkResponse = (res) => {
-    console.log('res checkResponse', res);
+    console.log('checkResponse', res);
     if (!res.ok) {
         return Promise.reject(`Error: ${res.status}`);
     }
@@ -12,9 +12,6 @@ const checkResponse = (res) => {
 }
 
 export const register = ({email, password}) => {
-
-    console.log('email, password', email, password);
-
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
         headers: {

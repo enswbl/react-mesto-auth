@@ -12,7 +12,7 @@ import Footer from './Footer';
 import api from '../utils/api';
 
 import {CurrentUserContext} from '../contexts/CurrentUserContext'
-import avatar from "../images/avatar.jpg";
+import avatar from '../images/avatar.jpg';
 
 import Login from './Login';
 import Register from './Register';
@@ -166,6 +166,7 @@ function App() {
         setAddPlaceState({isOpen: false});
         setRemoveCardState({isOpen: false});
         setSelectedCardState({isOpen: false});
+        setShowStatus({isOpen: false});
     };
 
     const [loggedIn, setLoggedIn] = React.useState(false);
@@ -176,36 +177,55 @@ function App() {
 
     const history = useHistory();
 
+    /*400 - не передано одно из полей
+    401 - пользователь с email не найден*/
     const handleLogin = ({email, password}) => {
         return Auth.authorize({email, password})
             .then((res) => {
-                if (!res) throw new Error('Неверный email или пароль')
+                if (!res || res.statusCode === (400 || 401)) throw new Error('Неверный email или пароль')
                 if (res.token) {
                     setLoggedIn(true)
                     localStorage.setItem('token', res.token)
-                    history.push('/')
+                    history.push('/users/me')
                     return res;
                 }
             })
     }
 
+
+    /*400 - некорректно заполнено одно из полей*/
     const handleRegister = ({email, password}) => {
         return Auth.register({email, password})
             .then((res) => {
-                if (!res || res.statusCode === 400) throw new Error('Что-то пошло не так');
+                if (!res || res.statusCode === 400) {
+                    console.log('QWEQWEQWE', )
+                    setStatus({status: false})
+                    /*setShowStatus({isOpen: true})*/
+
+                    throw new Error('Что-то пошло не так');
+                    }
                 if (res.data) {
                     localStorage.setItem('token', res.token)
-                    history.push('/sign-in')
+
+
+                   setStatus({status: true})
+                    /*setShowStatus({isOpen: true})*/
+
+
+
+                    setTimeout(history.push('/sign-in'), 12)
+
+
                     return res;
                 }
             }).catch()
     }
-
-    React.useEffect(() => {
+  
+/*    React.useEffect(() => {
         if (loggedIn) {
-            history.push("/");
+            history.push('/users/me');
         }
-    }, [loggedIn])
+    }, [loggedIn])*/
 
     React.useEffect(() => {
         tokenCheck()
@@ -213,20 +233,27 @@ function App() {
 
     const [userData, setUserData] = React.useState({
         email: '',
-        password: ''
+/*        password: ''*/
     })
 
     const tokenCheck = () => {
         if (localStorage.getItem('token')) {
             let token = localStorage.getItem('token');
-            Auth.checkData(token).then(({email, password}) => {
-                if (email) {
-                    setLoggedIn(true)
-                    setUserData({email, password})
-                }
+            Auth.checkData(token)
+                .then((res) => {
+                    if (res) {
+                        setLoggedIn(true);
+                        history.push('/users/me');
+                    }
             });
         }
     }
+
+    /*onSignOut*/
+
+
+    const [showStatus, setShowStatus] = React.useState({isOpen: false});
+    const [status, setStatus] = React.useState();
 
     return ((
         <>
@@ -238,16 +265,19 @@ function App() {
 
                     <Switch>
 
-                        <Route path="/sign-up">
-                            <Register handleRegister={handleRegister}/>
+                        <Route path='/sign-up'>
+                            <Register handleRegister={handleRegister}
+                                      setShowStatus={setShowStatus}
+
+                            />
                         </Route>
-                        <Route path="/sign-in">
+                        <Route path='/sign-in'>
                             <Login handleLogin={handleLogin}/>
                         </Route>
 
                         <ProtectedRoute
                             exact
-                            path="*"
+                            path='*'
                             loggedIn={loggedIn}
                             onEditAvatar={handleEditAvatarClick}
                             onEditProfile={handleEditProfileClick}
@@ -261,12 +291,12 @@ function App() {
 
                     </Switch>
 
-                    <Route path="/"> {/* exact path="*" */}
-                        {loggedIn && <Redirect to="/"/>}
+                    <Route path='/'> {/* exact path='*' */}
+                        {loggedIn && <Redirect to='users/me'/>}
                     </Route>
 
 
-                    {/* <Route path="/">
+                    {/* <Route path='/'>
                         <Header  />
                     </Route>*/}
 
@@ -287,6 +317,9 @@ function App() {
                                             onClose={closeAllPopups}/>
 
                         <ImagePopup selectedImage={selectedImage} isOpen={selectedCard.isOpen}
+                                    onClose={closeAllPopups}/>
+
+                        <InfoTooltip status={status} isOpen={showStatus.isOpen}
                                     onClose={closeAllPopups}/>
 
                     </section>

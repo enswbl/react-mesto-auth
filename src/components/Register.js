@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
-const Register = ({handleRegister}) => {
+const Register = ({handleRegister, setShowStatus}) => {
 
     const [userData, setUserData] = React.useState({email: '', password: ''});
 
@@ -17,6 +17,7 @@ const Register = ({handleRegister}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setShowStatus({isOpen: true})
         handleRegister(userData)
         /*            .catch(err => setMessage(err.message || 'Что-то пошло не так')
                 )*/
@@ -51,7 +52,7 @@ const Register = ({handleRegister}) => {
                        autoComplete='off'
                        required/>
 
-                <button type="submit" className="login__button">Зарегистрироваться</button>
+                <button type="submit" className="login__button" >Зарегистрироваться</button>
 
                 <Link to="/sign-in" className="login__link">Уже зарегистрированы? Войти</Link>
             </form>

@@ -3,6 +3,7 @@
 @import url(../popup/popup-photo/popup-photo.css);
 @import url(../popup/popup-edit-avatar/popup-edit-avatar.css);
 @import url(../popup/popup-remove-card/popup-remove-card.css);
+@import url(../popup/popup-status/popup-status.css);
 
 .popup {
   display: flex;
