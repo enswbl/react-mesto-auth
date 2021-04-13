@@ -12,12 +12,9 @@ const Login = ({handleLogin}) => {
         });
     }
 
-    /*    const [message, setMessage] = React.useState({message: ''})*/
-
     const handleSubmit = (e) => {
         e.preventDefault();
         handleLogin(userData)
-        /*           .catch(err => setMessage(err.message || 'Что-то пошло не так'));*/
 
     }
 

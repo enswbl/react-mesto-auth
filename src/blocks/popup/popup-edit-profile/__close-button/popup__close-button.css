@@ -1,4 +1,5 @@
 @import url(../__close-button/_photo/popup__close-button_photo.css);
+@import url(../__close-button/_status/popup__close-button_status.css);
 
 .popup__close-button {
   width: 41px;

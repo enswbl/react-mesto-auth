@@ -51,6 +51,17 @@ function App() {
 
     const [currentCards, setCurrentCardsState] = React.useState([]);
 
+    const [loggedIn, setLoggedIn] = React.useState()
+
+    const [userData, setUserData] = React.useState({
+        email: '',
+    })
+
+    const [status, setStatus] = React.useState();
+    const [showStatus, setShowStatus] = React.useState({isOpen: false});
+
+    const history = useHistory();
+
     React.useEffect(() => {
         api.getUserInfo()
             .then((result) => {
@@ -72,6 +83,15 @@ function App() {
             });
     }, []);
 
+    React.useEffect(() => {
+        if (loggedIn) {
+            history.push('/users/me');
+        }
+    }, [loggedIn])
+
+    React.useEffect(() => {
+        tokenCheck()
+    }, [])
 
     const handleUpdateAvatar = ({avatar}) => {
         api.setUserAvatar({avatar})
@@ -166,75 +186,44 @@ function App() {
         setAddPlaceState({isOpen: false});
         setRemoveCardState({isOpen: false});
         setSelectedCardState({isOpen: false});
-        setShowStatus({isOpen: false});
     };
 
-    const [loggedIn, setLoggedIn] = React.useState(false);
-
-    /*    const loggedInChecker = () => {
-            setLoggedIn(false);
-        };*/
-
-    const history = useHistory();
-
-    /*400 - не передано одно из полей
-    401 - пользователь с email не найден*/
     const handleLogin = ({email, password}) => {
         return Auth.authorize({email, password})
             .then((res) => {
-                if (!res || res.statusCode === (400 || 401)) throw new Error('Неверный email или пароль')
                 if (res.token) {
+
                     setLoggedIn(true)
                     localStorage.setItem('token', res.token)
-                    history.push('/users/me')
+                    tokenCheck();
+
+                    setTimeout(() => {
+                        history.push('/users/me')
+                    }, 2000)
                     return res;
                 }
             })
+            .catch(() => {
+                console.log('Error!');
+            })
     }
 
-
-    /*400 - некорректно заполнено одно из полей*/
     const handleRegister = ({email, password}) => {
         return Auth.register({email, password})
             .then((res) => {
-                if (!res || res.statusCode === 400) {
-                    console.log('QWEQWEQWE', )
-                    setStatus({status: false})
-                    /*setShowStatus({isOpen: true})*/
-
-                    throw new Error('Что-то пошло не так');
-                    }
                 if (res.data) {
                     localStorage.setItem('token', res.token)
 
-
-                   setStatus({status: true})
-                    /*setShowStatus({isOpen: true})*/
-
-
-
-                    setTimeout(history.push('/sign-in'), 12)
-
+                    setStatus(true)
+                    setShowStatus({isOpen: true})
 
                     return res;
                 }
-            }).catch()
+            }).catch(() => {
+                setStatus(false)
+                setShowStatus({isOpen: true})
+            })
     }
-  
-/*    React.useEffect(() => {
-        if (loggedIn) {
-            history.push('/users/me');
-        }
-    }, [loggedIn])*/
-
-    React.useEffect(() => {
-        tokenCheck()
-    }, [])
-
-    const [userData, setUserData] = React.useState({
-        email: '',
-/*        password: ''*/
-    })
 
     const tokenCheck = () => {
         if (localStorage.getItem('token')) {
@@ -244,33 +233,31 @@ function App() {
                     if (res) {
                         setLoggedIn(true);
                         history.push('/users/me');
+                        setUserData({email: res.data.email})
                     }
-            });
+                });
         }
     }
-
-    /*onSignOut*/
-
-
-    const [showStatus, setShowStatus] = React.useState({isOpen: false});
-    const [status, setStatus] = React.useState();
 
     return ((
         <>
             <CurrentUserContext.Provider value={currentUser}>
 
 
-                <Header/>
+                <Header userData={userData}/>
                 <main className='content'>
+
+                    <Route path='/'>
+                        {loggedIn && <Redirect to='/users/me'/>}
+                    </Route>
 
                     <Switch>
 
                         <Route path='/sign-up'>
                             <Register handleRegister={handleRegister}
-                                      setShowStatus={setShowStatus}
-
                             />
                         </Route>
+
                         <Route path='/sign-in'>
                             <Login handleLogin={handleLogin}/>
                         </Route>
@@ -291,16 +278,6 @@ function App() {
 
                     </Switch>
 
-                    <Route path='/'> {/* exact path='*' */}
-                        {loggedIn && <Redirect to='users/me'/>}
-                    </Route>
-
-
-                    {/* <Route path='/'>
-                        <Header  />
-                    </Route>*/}
-
-
                     <section className='popups'>
 
                         <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={editAvatarState.isOpen}
@@ -320,7 +297,7 @@ function App() {
                                     onClose={closeAllPopups}/>
 
                         <InfoTooltip status={status} isOpen={showStatus.isOpen}
-                                    onClose={closeAllPopups}/>
+                                     setShowStatus={setShowStatus}/>
 
                     </section>
                 </main>

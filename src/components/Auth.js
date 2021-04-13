@@ -4,7 +4,6 @@ import React from 'react';
 export const BASE_URL = 'https://auth.nomoreparties.co';
 
 const checkResponse = (res) => {
-    console.log('checkResponse', res);
     if (!res.ok) {
         return Promise.reject(`Error: ${res.status}`);
     }
@@ -22,7 +21,6 @@ export const register = ({email, password}) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
-            console.log('res register', res);
             return res;
         })
 };
@@ -38,7 +36,6 @@ export const authorize = ({email, password}) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
-            console.log('res authorize', res);
             return res;
         })
 };
@@ -54,7 +51,6 @@ export const checkData = (token) => {
     })
         .then((res) => checkResponse(res))
         .then((res) => {
-            console.log('res checkData', res);
             return res;
         })
 };

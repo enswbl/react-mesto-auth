@@ -1,10 +1,16 @@
 @import url(../header/__logo/header__logo.css);
+@import url(../header/__email/header__email.css);
+@import url(../header/__button/header__button.css);
+@import url(../header/__container/header__container.css);
 
 .header {
   width: 68.91%;
   margin: 0 auto 40px;
   padding-top: 45px;
   border-bottom: 1px solid rgba(84, 84, 84, 0.7);
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
 }
 
 @media (max-width: 1124px) {

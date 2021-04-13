@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
-const Register = ({handleRegister, setShowStatus}) => {
+const Register = ({handleRegister}) => {
 
     const [userData, setUserData] = React.useState({email: '', password: ''});
 
@@ -13,14 +13,9 @@ const Register = ({handleRegister, setShowStatus}) => {
         });
     }
 
-    /*    const [message, setMessage] = React.useState({message: ''})*/
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        setShowStatus({isOpen: true})
         handleRegister(userData)
-        /*            .catch(err => setMessage(err.message || 'Что-то пошло не так')
-                )*/
     }
 
     return ((
