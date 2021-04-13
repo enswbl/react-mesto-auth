@@ -19,7 +19,7 @@ import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 
-import * as Auth from './Auth';
+import * as Auth from '../utils/auth';
 
 
 function App() {
